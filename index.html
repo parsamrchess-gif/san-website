@@ -59,6 +59,7 @@
       border-left: 1px solid var(--line);
       border-right: 1px solid var(--line);
       background: var(--bg-0);
+      width: 100%;
     }
 
     .mono { font-family: var(--font-mono); }
@@ -80,13 +81,13 @@
       letter-spacing: 0.04em;
       color: var(--text-3);
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
 
     .telemetry-group {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
       flex-wrap: wrap;
     }
 
@@ -110,7 +111,7 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(7, 8, 9, 0.92);
+      background: rgba(7, 8, 9, 0.94);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
     }
@@ -119,7 +120,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 24px;
+      padding: 14px 24px;
+      gap: 12px;
     }
 
     .brand {
@@ -140,6 +142,7 @@
       background: var(--bg-2);
       display: grid;
       place-items: center;
+      flex-shrink: 0;
     }
 
     .nav-links {
@@ -160,9 +163,56 @@
       color: var(--text-1);
     }
 
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: var(--bg-1);
+      border: 1px solid var(--line-strong);
+      color: var(--text-1);
+      padding: 7px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .mobile-drawer {
+      display: none;
+      flex-direction: column;
+      border-top: 1px solid var(--line);
+      background: var(--bg-1);
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+    }
+
+    .mobile-drawer a {
+      padding: 14px 24px;
+      text-decoration: none;
+      color: var(--text-2);
+      font-size: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mobile-drawer a:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-drawer a:hover {
+      background: var(--bg-2);
+      color: var(--text-1);
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 9px 16px;
       font-size: 13px;
@@ -173,6 +223,7 @@
       transition: all 0.15s ease;
       border: 1px solid transparent;
       font-family: var(--font-sans);
+      white-space: nowrap;
     }
 
     .btn-primary {
@@ -224,16 +275,16 @@
     }
 
     h1 {
-      font-size: clamp(2.2rem, 4.2vw, 3.35rem);
+      font-size: clamp(1.95rem, 4.2vw, 3.35rem);
       font-weight: 700;
-      line-height: 1.08;
+      line-height: 1.1;
       letter-spacing: -0.035em;
       margin-bottom: 22px;
       color: var(--text-1);
     }
 
     .hero-desc {
-      font-size: 16px;
+      font-size: 15.5px;
       color: var(--text-2);
       max-width: 600px;
       margin-bottom: 32px;
@@ -338,6 +389,8 @@
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--text-2);
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .chrome-dots {
@@ -373,6 +426,7 @@
       font-size: 11px;
       color: var(--text-3);
       background: var(--bg-1);
+      gap: 8px;
     }
 
     .chart-box {
@@ -387,6 +441,8 @@
       align-items: baseline;
       margin-bottom: 10px;
       font-family: var(--font-mono);
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .price-big {
@@ -449,6 +505,7 @@
     .log-line {
       line-height: 1.45;
       color: var(--text-2);
+      word-break: break-word;
     }
 
     .log-time { color: var(--text-3); margin-right: 6px; }
@@ -470,6 +527,7 @@
       align-items: center;
       gap: 3px;
       height: 18px;
+      flex-shrink: 0;
     }
 
     .wave-bar {
@@ -494,7 +552,7 @@
       background: var(--bg-1);
       color: var(--text-2);
       border: none;
-      padding: 11px 14px;
+      padding: 12px 14px;
       text-align: left;
       font-family: var(--font-mono);
       font-size: 11px;
@@ -531,9 +589,7 @@
 
     .arch-node:last-child { border-right: none; }
     .arch-node:hover { background: var(--bg-1); }
-    .arch-node.active {
-      background: var(--bg-2);
-    }
+    .arch-node.active { background: var(--bg-2); }
     .arch-node.active::after {
       content: '';
       position: absolute;
@@ -608,11 +664,13 @@
     /* Section 03: Benchmarks Table */
     .table-wrap {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       border-bottom: 1px solid var(--line);
     }
 
     table {
       width: 100%;
+      min-width: 620px;
       border-collapse: collapse;
       font-size: 13px;
       text-align: left;
@@ -655,11 +713,13 @@
       background: var(--bg-1);
       border-bottom: 1px solid var(--line);
       padding-right: 16px;
-      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .tab-list {
       display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .code-tab {
@@ -671,6 +731,7 @@
       font-size: 12px;
       color: var(--text-3);
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .code-tab.active {
@@ -683,6 +744,7 @@
       background: #060708;
       padding: 24px 32px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       font-family: var(--font-mono);
       font-size: 12.5px;
       line-height: 1.65;
@@ -737,12 +799,19 @@
       border: 1px solid var(--line-strong);
       padding: 6px 6px 6px 16px;
       border-radius: 3px;
+      flex-wrap: wrap;
     }
 
     .email-text {
       font-family: var(--font-mono);
       font-size: 13px;
       color: var(--text-1);
+      word-break: break-all;
+    }
+
+    .email-actions {
+      display: flex;
+      gap: 8px;
     }
 
     /* Footer */
@@ -758,6 +827,7 @@
       gap: 12px;
     }
 
+    /* Tablet & Medium Screens */
     @media (max-width: 960px) {
       .hero,
       .workbench-grid,
@@ -777,7 +847,127 @@
       .arch-node {
         border-bottom: 1px solid var(--line);
       }
+      .arch-node:nth-child(even) {
+        border-right: none;
+      }
+      .arch-node:last-child {
+        grid-column: 1 / -1;
+        border-right: none;
+        border-bottom: none;
+      }
       .nav-links { display: none; }
+      .menu-toggle { display: inline-flex; }
+    }
+
+    /* Mobile Phones */
+    @media (max-width: 640px) {
+      .shell {
+        border-left: none;
+        border-right: none;
+      }
+      .telemetry-bar {
+        padding: 8px 16px;
+        font-size: 10px;
+      }
+      .telemetry-group {
+        gap: 12px;
+      }
+      .hide-sm {
+        display: none;
+      }
+      .nav-inner {
+        padding: 12px 16px;
+      }
+      .hero-main {
+        padding: 40px 16px 36px;
+      }
+      .hero-desc {
+        font-size: 14.5px;
+      }
+      .hero-actions .btn {
+        width: 100%;
+      }
+      .metric-cell {
+        padding: 16px;
+      }
+      .sec-header {
+        padding: 32px 16px 20px;
+      }
+      .sec-title {
+        font-size: 20px;
+      }
+      .workbench-wrap {
+        padding: 16px;
+      }
+      .sys-stats {
+        grid-template-columns: 1fr;
+      }
+      .sys-stat-item {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .sys-stat-item:last-child {
+        border-bottom: none;
+      }
+      .sys-stat-item div:first-child {
+        margin-bottom: 0;
+      }
+      .trigger-grid {
+        grid-template-columns: 1fr;
+      }
+      .arch-node {
+        padding: 16px;
+      }
+      .arch-detail {
+        padding: 20px 16px;
+        gap: 20px;
+      }
+      .arch-kv {
+        grid-template-columns: 1fr 1fr;
+      }
+      th, td {
+        padding: 12px 14px;
+      }
+      .code-tabs {
+        flex-direction: column;
+        align-items: stretch;
+        padding-right: 0;
+        gap: 0;
+      }
+      .code-copy-wrap {
+        padding: 8px 16px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: flex-end;
+      }
+      .code-body {
+        padding: 18px 16px;
+        font-size: 11.5px;
+      }
+      .partner-card {
+        padding: 24px 16px;
+      }
+      .contact-strip {
+        padding: 32px 16px;
+      }
+      .email-box {
+        width: 100%;
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .email-actions {
+        width: 100%;
+      }
+      .email-actions .btn {
+        flex: 1;
+      }
+      footer {
+        padding: 20px 16px;
+      }
     }
   </style>
 </head>
@@ -787,13 +977,13 @@
     <!-- Top Live Telemetry Strip -->
     <div class="telemetry-bar">
       <div class="telemetry-group">
-        <span><span class="pulse-dot"></span>RUNTIME: PYTHON 3.12 / PYSIDE6</span>
-        <span>DISPLAY: LINUX WAYLAND</span>
-        <span>MEMORY: SQLITE FTS5</span>
+        <span><span class="pulse-dot"></span>PYTHON 3.12 / PYSIDE6</span>
+        <span class="hide-sm">LINUX WAYLAND</span>
+        <span class="hide-sm">SQLITE FTS5</span>
       </div>
       <div class="telemetry-group">
-        <span>MT5 FEED: <strong class="gold" id="topPrice">XAUUSD 2,684.40</strong></span>
-        <span>BUILD: v1.0.4-BETA</span>
+        <span>MT5: <strong class="gold" id="topPrice">XAUUSD 2,684.40</strong></span>
+        <span class="hide-sm">v1.0.4-BETA</span>
       </div>
     </div>
 
@@ -818,14 +1008,24 @@
           <a href="#modules">Modules</a>
           <a href="#partners">Sponsorship</a>
         </nav>
-        <a href="#contact" class="btn btn-primary">Partner Inquiry</a>
+        <div class="nav-right">
+          <a href="#contact" class="btn btn-primary" style="padding:7px 14px;">Partner Inquiry</a>
+          <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">MENU</button>
+        </div>
+      </div>
+      <div class="mobile-drawer" id="mobileDrawer">
+        <a href="#workbench" onclick="closeMenu()">01 // Workbench</a>
+        <a href="#architecture" onclick="closeMenu()">02 // Architecture</a>
+        <a href="#benchmarks" onclick="closeMenu()">03 // Benchmarks</a>
+        <a href="#modules" onclick="closeMenu()">04 // Modules</a>
+        <a href="#partners" onclick="closeMenu()">05 // Sponsorship</a>
       </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
       <div class="hero-main">
-        <div class="eyebrow">LOCAL-FIRST DESKTOP AGENT • CPU-ONLY ARCHITECTURE</div>
+        <div class="eyebrow">LOCAL-FIRST DESKTOP AGENT • CPU-ONLY</div>
         <h1>Desktop vision, voice, and live market telemetry without cloud bloat.</h1>
         <p class="hero-desc">
           SAN is an autonomous desktop intelligence runtime engineered in Python and PySide6 for Fedora Linux (Wayland). It captures live screen context, recalls persistent local SQLite FTS5 memory in milliseconds, and streams MetaTrader 5 XAUUSD market data on standard 8GB CPU laptops.
@@ -862,7 +1062,7 @@
           <h2 class="sec-title">Interactive Telemetry & Agent Console</h2>
         </div>
         <p class="sec-note">
-          Test how SAN coordinates Wayland screen perception, local SQLite recall, and live MetaTrader 5 XAUUSD ticks. Click any command below.
+          Test how SAN coordinates Wayland screen perception, local SQLite recall, and live MetaTrader 5 XAUUSD ticks. Tap any command below.
         </p>
       </div>
 
@@ -870,7 +1070,7 @@
         <div class="window">
           <div class="window-chrome">
             <div class="chrome-dots"><span></span><span></span><span></span></div>
-            <div>san-core — fedora-wayland-session (pid: 4192)</div>
+            <div class="hide-sm">san-core — fedora-wayland-session (pid: 4192)</div>
             <div><span class="green">●</span> MT5 BRIDGE ONLINE</div>
           </div>
 
@@ -887,7 +1087,7 @@
                     <span class="price-big" id="chartPrice">2,684.40</span>
                     <span class="mono green" id="chartDelta" style="font-size:12px; margin-left:8px;">+0.18%</span>
                   </div>
-                  <span class="mono dim" style="font-size:11px;">SESSION: LDN / NY</span>
+                  <span class="mono dim" style="font-size:11px;">LDN / NY</span>
                 </div>
                 <canvas id="xauCanvas"></canvas>
               </div>
@@ -912,7 +1112,7 @@
               <div>
                 <div class="pane-head">
                   <span>AGENT EVENT BUS</span>
-                  <span>MODE: LOCAL-FIRST</span>
+                  <span>LOCAL-FIRST</span>
                 </div>
                 <div class="console-log" id="consoleLog">
                   <div class="log-line"><span class="log-time">[22:14:01]</span><span class="log-tag green">BOOT</span>SAN PySide6 runtime initialized (cold start: 410ms).</div>
@@ -924,7 +1124,7 @@
 
               <div>
                 <div class="voice-strip">
-                  <span class="mono dim" id="voiceStatus" style="font-size:11px;">VOICE ENGINE: IDLE (EDGE-TTS / NEURAL)</span>
+                  <span class="mono dim" id="voiceStatus" style="font-size:10.5px;">VOICE: IDLE (EDGE-TTS / NEURAL)</span>
                   <div class="waveform" id="waveform">
                     <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                     <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
@@ -1077,7 +1277,9 @@
           <button class="code-tab" onclick="switchCode('mt5', this)">mt5_telemetry.py</button>
           <button class="code-tab" onclick="switchCode('vision', this)">wayland_vision.py</button>
         </div>
-        <button class="btn btn-outline" style="padding:5px 12px; font-size:11px;" onclick="copyActiveCode(this)">Copy Snippet</button>
+        <div class="code-copy-wrap">
+          <button class="btn btn-outline" style="padding:5px 12px; font-size:11px;" onclick="copyActiveCode(this)">Copy Snippet</button>
+        </div>
       </div>
 
       <pre class="code-body" id="codeDisplay"></pre>
@@ -1126,8 +1328,10 @@
         </div>
         <div class="email-box">
           <span class="email-text" id="emailVal">pasamr.chess@gmail.com</span>
-          <button class="btn btn-primary" style="padding:7px 14px; font-size:12px;" onclick="copyEmail(this)">Copy Email</button>
-          <a href="mailto:pasamr.chess@gmail.com?subject=SAN%20Project%20Inquiry" class="btn btn-outline" style="padding:7px 14px; font-size:12px;">Mailto</a>
+          <div class="email-actions">
+            <button class="btn btn-primary" style="padding:7px 14px; font-size:12px;" onclick="copyEmail(this)">Copy Email</button>
+            <a href="mailto:pasamr.chess@gmail.com?subject=SAN%20Project%20Inquiry" class="btn btn-outline" style="padding:7px 14px; font-size:12px;">Mailto</a>
+          </div>
         </div>
       </div>
     </section>
@@ -1140,6 +1344,18 @@
   </div>
 
   <script>
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('menuToggle');
+    const drawer = document.getElementById('mobileDrawer');
+    menuBtn.addEventListener('click', () => {
+      drawer.classList.toggle('open');
+      menuBtn.textContent = drawer.classList.contains('open') ? 'CLOSE' : 'MENU';
+    });
+    function closeMenu() {
+      drawer.classList.remove('open');
+      menuBtn.textContent = 'MENU';
+    }
+
     // 1. Live XAUUSD Canvas Chart Simulation
     const canvas = document.getElementById('xauCanvas');
     const ctx = canvas.getContext('2d');
@@ -1164,6 +1380,7 @@
     function drawChart() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
+      if (!rect.width) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -1182,7 +1399,6 @@
 
       const yOf = val => h - ((val - min) / (max - min)) * h;
 
-      // Grid lines
       ctx.strokeStyle = '#181c22';
       ctx.lineWidth = 1;
       for (let i = 1; i <= 3; i++) {
@@ -1193,7 +1409,6 @@
         ctx.stroke();
       }
 
-      // EMA Line
       ctx.strokeStyle = 'rgba(212, 168, 67, 0.55)';
       ctx.lineWidth = 1.25;
       ctx.beginPath();
@@ -1208,7 +1423,6 @@
       });
       ctx.stroke();
 
-      // Candlesticks
       const step = w / candles.length;
       const bodyW = Math.max(3, step * 0.52);
       candles.forEach((c, idx) => {
@@ -1217,13 +1431,11 @@
         ctx.strokeStyle = bull ? '#22c55e' : '#ef4444';
         ctx.fillStyle = bull ? '#22c55e' : '#ef4444';
 
-        // Wick
         ctx.beginPath();
         ctx.moveTo(x, yOf(c.high));
         ctx.lineTo(x, yOf(c.low));
         ctx.stroke();
 
-        // Body
         const top = yOf(Math.max(c.open, c.close));
         const bot = yOf(Math.min(c.open, c.close));
         ctx.fillRect(x - bodyW / 2, top, bodyW, Math.max(1.5, bot - top));
@@ -1316,7 +1528,7 @@
       const ts = now.toTimeString().slice(0, 8);
       const steps = scenarios[key];
 
-      setWave(true, 'VOICE ENGINE: SYNTHESIZING RESPONSE...');
+      setWave(true, 'VOICE: SYNTHESIZING RESPONSE...');
       steps.forEach((step, idx) => {
         setTimeout(() => {
           const row = document.createElement('div');
@@ -1325,7 +1537,7 @@
           logEl.appendChild(row);
           logEl.scrollTop = logEl.scrollHeight;
           if (idx === steps.length - 1) {
-            setTimeout(() => setWave(false, 'VOICE ENGINE: IDLE (EDGE-TTS / NEURAL)'), 1400);
+            setTimeout(() => setWave(false, 'VOICE: IDLE (EDGE-TTS / NEURAL)'), 1400);
           }
         }, idx * 420);
       });
@@ -1424,9 +1636,7 @@
     <span class="kw">return</span> pathlib.Path(out_path)`
     };
 
-    let currentCodeKey = 'memory';
     function switchCode(key, btn) {
-      currentCodeKey = key;
       document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('codeDisplay').innerHTML = codeSnippets[key];
