@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAN — Local-First Desktop Intelligence & Market Telemetry</title>
+  <meta name="description" content="SAN is a native Python/PySide6 desktop AI runtime for Linux/Wayland featuring screen context vision, SQLite FTS5 local memory, low-latency voice synthesis, and live MetaTrader 5 XAUUSD telemetry." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-0: #070809;
+      --bg-1: #0c0e11;
+      --bg-2: #12151a;
+      --bg-3: #181c22;
+      --line: #1f242c;
+      --line-strong: #2e3540;
+      --text-1: #eef0f3;
+      --text-2: #9ba3b0;
+      --text-3: #636c7a;
+      --gold: #d4a843;
+      --gold-dim: rgba(212, 168, 67, 0.12);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.12);
+      --red: #ef4444;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-0);
+      color: var(--text-1);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-0);
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    /* Structural Frame */
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      background: var(--bg-0);
+    }
+
+    .mono { font-family: var(--font-mono); }
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+    .muted { color: var(--text-2); }
+    .dim { color: var(--text-3); }
+
+    /* Top Telemetry Strip */
+    .telemetry-bar {
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-1);
+      padding: 8px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--text-3);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .telemetry-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pulse-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Sticky Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7, 8, 9, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-1);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 14px;
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--line-strong);
+      background: var(--bg-2);
+      display: grid;
+      place-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      font-family: var(--font-sans);
+    }
+
+    .btn-primary {
+      background: var(--text-1);
+      color: var(--bg-0);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #d5d9e0;
+    }
+
+    .btn-outline {
+      background: var(--bg-1);
+      color: var(--text-1);
+      border-color: var(--line-strong);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-2);
+      border-color: var(--text-3);
+    }
+
+    /* Hero Section */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-main {
+      padding: 72px 32px 64px;
+      border-right: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4.2vw, 3.35rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin-bottom: 22px;
+      color: var(--text-1);
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--text-2);
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--bg-1);
+    }
+
+    .metric-cell {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric-cell:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    /* Section Headers */
+    .sec-header {
+      padding: 44px 32px 28px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .sec-index {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .sec-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .sec-note {
+      font-size: 13px;
+      color: var(--text-2);
+      max-width: 420px;
+    }
+
+    /* Section 01: Interactive Workbench */
+    .workbench-wrap {
+      padding: 32px;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-1);
+    }
+
+    .window {
+      border: 1px solid var(--line-strong);
+      background: var(--bg-0);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .window-chrome {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .chrome-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chrome-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--line-strong);
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+    }
+
+    .wb-left {
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pane-head {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-3);
+      background: var(--bg-1);
+    }
+
+    .chart-box {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+
+    .chart-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+    }
+
+    .price-big {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    #xauCanvas {
+      width: 100%;
+      height: 170px;
+      display: block;
+    }
+
+    .sys-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .sys-stat-item {
+      padding: 12px 14px;
+      border-right: 1px solid var(--line);
+    }
+
+    .sys-stat-item:last-child {
+      border-right: none;
+    }
+
+    .sys-stat-item div:first-child {
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+
+    .sys-stat-item div:last-child {
+      color: var(--text-1);
+      font-weight: 500;
+    }
+
+    /* Right Console Pane */
+    .wb-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .console-log {
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      height: 215px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #060708;
+    }
+
+    .log-line {
+      line-height: 1.45;
+      color: var(--text-2);
+    }
+
+    .log-time { color: var(--text-3); margin-right: 6px; }
+    .log-tag { font-weight: 600; margin-right: 6px; }
+
+    .voice-strip {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 16px;
+      background: var(--bg-1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 18px;
+    }
+
+    .wave-bar {
+      width: 2px;
+      height: 4px;
+      background: var(--text-3);
+      transition: height 0.12s ease, background 0.12s ease;
+    }
+
+    .waveform.active .wave-bar {
+      background: var(--gold);
+    }
+
+    .trigger-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .trigger-btn {
+      background: var(--bg-1);
+      color: var(--text-2);
+      border: none;
+      padding: 11px 14px;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .trigger-btn:hover,
+    .trigger-btn.active {
+      background: var(--bg-2);
+      color: var(--text-1);
+    }
+
+    .trigger-btn span {
+      color: var(--gold);
+      margin-right: 6px;
+    }
+
+    /* Section 02: Interactive Architecture */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .arch-node {
+      padding: 24px 20px;
+      border-right: 1px solid var(--line);
+      cursor: pointer;
+      background: var(--bg-0);
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .arch-node:last-child { border-right: none; }
+    .arch-node:hover { background: var(--bg-1); }
+    .arch-node.active {
+      background: var(--bg-2);
+    }
+    .arch-node.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gold);
+    }
+
+    .node-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+
+    .node-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .node-tech {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .arch-detail {
+      padding: 28px 32px;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .arch-detail h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .arch-detail p {
+      font-size: 14px;
+      color: var(--text-2);
+    }
+
+    .arch-kv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .kv-box {
+      padding: 12px;
+      background: var(--bg-0);
+      border: 1px solid var(--line);
+    }
+
+    .kv-box span:first-child {
+      display: block;
+      font-size: 10px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* Section 03: Benchmarks Table */
+    .table-wrap {
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      background: var(--bg-1);
+    }
+
+    td.highlight {
+      font-family: var(--font-mono);
+      color: var(--text-1);
+      font-weight: 600;
+      background: rgba(212, 168, 67, 0.04);
+    }
+
+    /* Section 04: Code Inspector */
+    .code-section {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .code-tabs {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--line);
+      padding-right: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-list {
+      display: flex;
+    }
+
+    .code-tab {
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--line);
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-3);
+      cursor: pointer;
+    }
+
+    .code-tab.active {
+      background: var(--bg-0);
+      color: var(--text-1);
+      border-top: 2px solid var(--gold);
+    }
+
+    .code-body {
+      background: #060708;
+      padding: 24px 32px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #c9d1d9;
+    }
+
+    .kw { color: #d4a843; }
+    .fn { color: #eef0f3; font-weight: 600; }
+    .str { color: #7ee787; }
+    .cm { color: #5c6573; }
+
+    /* Section 05: Partners & Contact */
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .partner-card {
+      padding: 32px 28px;
+      border-right: 1px solid var(--line);
+    }
+
+    .partner-card:last-child { border-right: none; }
+
+    .partner-card h3 {
+      font-size: 16px;
+      margin: 12px 0 10px;
+    }
+
+    .partner-card p {
+      font-size: 13.5px;
+      color: var(--text-2);
+    }
+
+    .contact-strip {
+      padding: 48px 32px;
+      background: var(--bg-1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .email-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-0);
+      border: 1px solid var(--line-strong);
+      padding: 6px 6px 6px 16px;
+      border-radius: 3px;
+    }
+
+    .email-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-1);
+    }
+
+    /* Footer */
+    footer {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-3);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .workbench-grid,
+      .arch-detail,
+      .partner-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-main,
+      .wb-left,
+      .partner-card {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .arch-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .arch-node {
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+    <!-- Top Live Telemetry Strip -->
+    <div class="telemetry-bar">
+      <div class="telemetry-group">
+        <span><span class="pulse-dot"></span>RUNTIME: PYTHON 3.12 / PYSIDE6</span>
+        <span>DISPLAY: LINUX WAYLAND</span>
+        <span>MEMORY: SQLITE FTS5</span>
+      </div>
+      <div class="telemetry-group">
+        <span>MT5 FEED: <strong class="gold" id="topPrice">XAUUSD 2,684.40</strong></span>
+        <span>BUILD: v1.0.4-BETA</span>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="nav-inner">
+        <a href="#" class="brand">
+          <span class="brand-mark">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <rect x="1" y="1" width="4" height="4" fill="#eef0f3"/>
+              <rect x="7" y="1" width="4" height="4" fill="#d4a843"/>
+              <rect x="1" y="7" width="4" height="4" fill="#636c7a"/>
+              <rect x="7" y="7" width="4" height="4" fill="#eef0f3"/>
+            </svg>
+          </span>
+          SAN
+        </a>
+        <nav class="nav-links">
+          <a href="#workbench">Workbench</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#benchmarks">Benchmarks</a>
+          <a href="#modules">Modules</a>
+          <a href="#partners">Sponsorship</a>
+        </nav>
+        <a href="#contact" class="btn btn-primary">Partner Inquiry</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">LOCAL-FIRST DESKTOP AGENT • CPU-ONLY ARCHITECTURE</div>
+        <h1>Desktop vision, voice, and live market telemetry without cloud bloat.</h1>
+        <p class="hero-desc">
+          SAN is an autonomous desktop intelligence runtime engineered in Python and PySide6 for Fedora Linux (Wayland). It captures live screen context, recalls persistent local SQLite FTS5 memory in milliseconds, and streams MetaTrader 5 XAUUSD market data on standard 8GB CPU laptops.
+        </p>
+        <div class="hero-actions">
+          <a href="#workbench" class="btn btn-primary">Launch Interactive Simulation</a>
+          <a href="#modules" class="btn btn-outline">Inspect Core Modules</a>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div class="metric-cell">
+          <div class="metric-label">Idle Memory Footprint</div>
+          <div class="metric-value">148 MB</div>
+          <div class="metric-sub">Native Qt/PySide6 vs ~900MB Electron</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Dedicated GPU Required</div>
+          <div class="metric-value">0 MB VRAM</div>
+          <div class="metric-sub">Validated on Intel i5-8th Gen / UHD 620</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">SQLite FTS5 Recall</div>
+          <div class="metric-value">1.4 ms</div>
+          <div class="metric-sub">100% local full-text context indexing</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 // Interactive Workbench -->
+    <section id="workbench">
+      <div class="sec-header">
+        <div>
+          <span class="sec-index">01 // RUNTIME WORKBENCH</span>
+          <h2 class="sec-title">Interactive Telemetry & Agent Console</h2>
+        </div>
+        <p class="sec-note">
+          Test how SAN coordinates Wayland screen perception, local SQLite recall, and live MetaTrader 5 XAUUSD ticks. Click any command below.
+        </p>
+      </div>
+
+      <div class="workbench-wrap">
+        <div class="window">
+          <div class="window-chrome">
+            <div class="chrome-dots"><span></span><span></span><span></span></div>
+            <div>san-core — fedora-wayland-session (pid: 4192)</div>
+            <div><span class="green">●</span> MT5 BRIDGE ONLINE</div>
+          </div>
+
+          <div class="workbench-grid">
+            <!-- Left: Live Market Canvas + Sys Telemetry -->
+            <div class="wb-left">
+              <div class="pane-head">
+                <span>MT5 STREAM // XAUUSD (M1)</span>
+                <span id="spreadLabel">SPREAD: 14 PTS</span>
+              </div>
+              <div class="chart-box">
+                <div class="chart-stats">
+                  <div>
+                    <span class="price-big" id="chartPrice">2,684.40</span>
+                    <span class="mono green" id="chartDelta" style="font-size:12px; margin-left:8px;">+0.18%</span>
+                  </div>
+                  <span class="mono dim" style="font-size:11px;">SESSION: LDN / NY</span>
+                </div>
+                <canvas id="xauCanvas"></canvas>
+              </div>
+              <div class="sys-stats">
+                <div class="sys-stat-item">
+                  <div>HOST CPU</div>
+                  <div id="cpuStat">11.4% (i5-8th)</div>
+                </div>
+                <div class="sys-stat-item">
+                  <div>RAM ALLOC</div>
+                  <div id="ramStat">148 MB / 8 GB</div>
+                </div>
+                <div class="sys-stat-item">
+                  <div>WAYLAND IPC</div>
+                  <div class="green">PipeWire OK</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Event Console + Voice Strip + Triggers -->
+            <div class="wb-right">
+              <div>
+                <div class="pane-head">
+                  <span>AGENT EVENT BUS</span>
+                  <span>MODE: LOCAL-FIRST</span>
+                </div>
+                <div class="console-log" id="consoleLog">
+                  <div class="log-line"><span class="log-time">[22:14:01]</span><span class="log-tag green">BOOT</span>SAN PySide6 runtime initialized (cold start: 410ms).</div>
+                  <div class="log-line"><span class="log-time">[22:14:02]</span><span class="log-tag gold">MT5</span>Attached to XAUUSD tick buffer (100ms polling).</div>
+                  <div class="log-line"><span class="log-time">[22:14:02]</span><span class="log-tag">SQLITE</span>FTS5 virtual table ready: 1,420 indexed context nodes.</div>
+                  <div class="log-line"><span class="log-time">[22:14:03]</span><span class="log-tag green">READY</span>Awaiting voice trigger or desktop event...</div>
+                </div>
+              </div>
+
+              <div>
+                <div class="voice-strip">
+                  <span class="mono dim" id="voiceStatus" style="font-size:11px;">VOICE ENGINE: IDLE (EDGE-TTS / NEURAL)</span>
+                  <div class="waveform" id="waveform">
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                  </div>
+                </div>
+                <div class="trigger-grid">
+                  <button class="trigger-btn active" onclick="runScenario('vision', this)"><span>[01]</span>Capture Wayland Screen</button>
+                  <button class="trigger-btn" onclick="runScenario('market', this)"><span>[02]</span>Analyze XAUUSD Tick</button>
+                  <button class="trigger-btn" onclick="runScenario('memory', this)"><span>[03]</span>Query SQLite FTS5</button>
+                  <button class="trigger-btn" onclick="runScenario('audit', this)"><span>[04]</span>Run Hardware Audit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 // Interactive Architecture -->
+    <section id="architecture">
+      <div class="sec-header">
+        <div>
+          <span class="sec-index">02 // SYSTEM ARCHITECTURE</span>
+          <h2 class="sec-title">Five Decoupled Subsystems</h2>
+        </div>
+        <p class="sec-note">
+          Select any node in the pipeline to inspect its exact protocol, runtime footprint, and design constraints.
+        </p>
+      </div>
+
+      <div class="arch-grid">
+        <div class="arch-node active" onclick="selectArch(0, this)">
+          <div class="node-num">NODE 01</div>
+          <div class="node-title">Wayland Vision</div>
+          <div class="node-tech">xdg-desktop-portal</div>
+        </div>
+        <div class="arch-node" onclick="selectArch(1, this)">
+          <div class="node-num">NODE 02</div>
+          <div class="node-title">Local Memory</div>
+          <div class="node-tech">SQLite3 + FTS5</div>
+        </div>
+        <div class="arch-node" onclick="selectArch(2, this)">
+          <div class="node-num">NODE 03</div>
+          <div class="node-title">MT5 Telemetry</div>
+          <div class="node-tech">XAUUSD Bridge</div>
+        </div>
+        <div class="arch-node" onclick="selectArch(3, this)">
+          <div class="node-num">NODE 04</div>
+          <div class="node-title">Inference Router</div>
+          <div class="node-tech">Hybrid API / Local</div>
+        </div>
+        <div class="arch-node" onclick="selectArch(4, this)">
+          <div class="node-num">NODE 05</div>
+          <div class="node-title">Voice Pipeline</div>
+          <div class="node-tech">Neural TTS / STT</div>
+        </div>
+      </div>
+
+      <div class="arch-detail" id="archDetail">
+        <div>
+          <h3 id="archTitle">Native Wayland Screen Capture & Context Compression</h3>
+          <p id="archDesc">
+            Unlike legacy X11 scrapers that break on modern Fedora GNOME sessions, SAN captures frames via PipeWire and xdg-desktop-portal, downsampling unchanged regions before sending compact visual deltas to vision models.
+          </p>
+        </div>
+        <div class="arch-kv">
+          <div class="kv-box"><span>Protocol</span><strong id="archProto">PipeWire / D-Bus</strong></div>
+          <div class="kv-box"><span>Latency Budget</span><strong id="archLat">&lt; 85 ms</strong></div>
+          <div class="kv-box"><span>Memory Cost</span><strong id="archMem">28 MB</strong></div>
+          <div class="kv-box"><span>Privacy Model</span><strong id="archPriv">On-Demand Frame</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 // Engineering Benchmarks -->
+    <section id="benchmarks">
+      <div class="sec-header">
+        <div>
+          <span class="sec-index">03 // HARDWARE BENCHMARKS</span>
+          <h2 class="sec-title">Engineered for Constrained Hardware</h2>
+        </div>
+        <p class="sec-note">
+          Measured on reference development hardware: Intel Core i5 (8th Gen), 8GB DDR4 RAM, Intel UHD 620 (128MB VRAM), Fedora Linux.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Engineering Metric</th>
+              <th>SAN (PySide6 + SQLite)</th>
+              <th>Typical Electron AI App</th>
+              <th>Browser Tab Assistant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Idle RAM Consumption</td>
+              <td class="highlight">148 MB</td>
+              <td class="muted">720 – 1,100 MB</td>
+              <td class="muted">450 – 800 MB</td>
+            </tr>
+            <tr>
+              <td>Cold Startup Time</td>
+              <td class="highlight">0.41 s</td>
+              <td class="muted">2.8 – 4.5 s</td>
+              <td class="muted">1.9 s (+ browser)</td>
+            </tr>
+            <tr>
+              <td>Offline Context Recall</td>
+              <td class="highlight">1.4 ms (SQLite FTS5)</td>
+              <td class="muted">Requires Cloud DB</td>
+              <td class="muted">Unavailable Offline</td>
+            </tr>
+            <tr>
+              <td>Live Wayland OS Awareness</td>
+              <td class="highlight">Native Desktop Bridge</td>
+              <td class="muted">Limited Sandbox</td>
+              <td class="muted">Tab-Isolated Only</td>
+            </tr>
+            <tr>
+              <td>MetaTrader 5 XAUUSD Stream</td>
+              <td class="highlight">Direct Tick Telemetry</td>
+              <td class="muted">Manual Screenshot</td>
+              <td class="muted">No Local Socket</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 04 // Core Modules -->
+    <section id="modules" class="code-section">
+      <div class="sec-header">
+        <div>
+          <span class="sec-index">04 // MODULE INSPECTOR</span>
+          <h2 class="sec-title">Clean, Zero-Bloat Implementation</h2>
+        </div>
+        <p class="sec-note">
+          Representative core patterns powering SAN's local memory indexing, Wayland vision capture, and market data bridge.
+        </p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="tab-list">
+          <button class="code-tab active" onclick="switchCode('memory', this)">memory_fts5.py</button>
+          <button class="code-tab" onclick="switchCode('mt5', this)">mt5_telemetry.py</button>
+          <button class="code-tab" onclick="switchCode('vision', this)">wayland_vision.py</button>
+        </div>
+        <button class="btn btn-outline" style="padding:5px 12px; font-size:11px;" onclick="copyActiveCode(this)">Copy Snippet</button>
+      </div>
+
+      <pre class="code-body" id="codeDisplay"></pre>
+    </section>
+
+    <!-- 05 // Sponsorship & Partnerships -->
+    <section id="partners">
+      <div class="sec-header">
+        <div>
+          <span class="sec-index">05 // EXHIBITION & SPONSORSHIP (DEC 2026 – APR 2027)</span>
+          <h2 class="sec-title">Partnership & Funding Tracks</h2>
+        </div>
+        <p class="sec-note">
+          SAN is preparing for live showcase exhibitions across the Kurdistan Region and Iraq. Three structured partnership tracks are open.
+        </p>
+      </div>
+
+      <div class="partner-grid">
+        <div class="partner-card">
+          <span class="mono gold" style="font-size:11px;">TRACK A // INFRASTRUCTURE</span>
+          <h3>AI Compute & Voice APIs</h3>
+          <p>
+            Integrating low-latency neural speech synthesis, real-time speech-to-text, and multimodal vision APIs to scale SAN beyond free developer limits without requiring local GPUs.
+          </p>
+        </div>
+        <div class="partner-card">
+          <span class="mono gold" style="font-size:11px;">TRACK B // FINTECH & BROKERS</span>
+          <h3>MT5 & XAUUSD Integration</h3>
+          <p>
+            Co-branded exhibition demos, analytical voice co-pilot distribution, and Introducing Broker (IB) partnerships tailored to active MetaTrader 5 gold traders in Iraq and MENA.
+          </p>
+        </div>
+        <div class="partner-card">
+          <span class="mono gold" style="font-size:11px;">TRACK C // REGIONAL CSR</span>
+          <h3>Hardware & Expo Sponsors</h3>
+          <p>
+            Supporting exhibition booth hardware, display monitors, and directional audio gear in exchange for prominent brand placement across the live demo interface and exhibition stand.
+          </p>
+        </div>
+      </div>
+
+      <div class="contact-strip" id="contact">
+        <div>
+          <div class="mono dim" style="font-size:11px; margin-bottom:6px;">DIRECT ENGINEERING & SPONSORSHIP CONTACT</div>
+          <h3 style="font-size:20px; font-weight:600;">Request a live demo or sponsorship deck.</h3>
+        </div>
+        <div class="email-box">
+          <span class="email-text" id="emailVal">pasamr.chess@gmail.com</span>
+          <button class="btn btn-primary" style="padding:7px 14px; font-size:12px;" onclick="copyEmail(this)">Copy Email</button>
+          <a href="mailto:pasamr.chess@gmail.com?subject=SAN%20Project%20Inquiry" class="btn btn-outline" style="padding:7px 14px; font-size:12px;">Mailto</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>SAN PROJECT // ENGINEERED BY VALANTINO (PARSA AHMAD) • KURDISTAN REGION, IRAQ</div>
+      <div>PYTHON 3.12 • PYSIDE6 • WAYLAND • SQLITE FTS5 • MT5</div>
+    </footer>
+  </div>
+
+  <script>
+    // 1. Live XAUUSD Canvas Chart Simulation
+    const canvas = document.getElementById('xauCanvas');
+    const ctx = canvas.getContext('2d');
+    let candles = [];
+    let currentPrice = 2684.40;
+    const basePrice = 2679.50;
+
+    function initCandles() {
+      let p = 2680.20;
+      for (let i = 0; i < 36; i++) {
+        const open = p;
+        const delta = (Math.random() - 0.47) * 2.4;
+        const close = open + delta;
+        const high = Math.max(open, close) + Math.random() * 1.1;
+        const low = Math.min(open, close) - Math.random() * 1.1;
+        candles.push({ open, high, low, close });
+        p = close;
+      }
+      currentPrice = p;
+    }
+
+    function drawChart() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+
+      let min = Infinity, max = -Infinity;
+      candles.forEach(c => {
+        if (c.low < min) min = c.low;
+        if (c.high > max) max = c.high;
+      });
+      const pad = (max - min) * 0.15 || 1;
+      min -= pad; max += pad;
+
+      const yOf = val => h - ((val - min) / (max - min)) * h;
+
+      // Grid lines
+      ctx.strokeStyle = '#181c22';
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 3; i++) {
+        const y = (h / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // EMA Line
+      ctx.strokeStyle = 'rgba(212, 168, 67, 0.55)';
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      let ema = candles[0].close;
+      const k = 2 / (9 + 1);
+      candles.forEach((c, idx) => {
+        ema = c.close * k + ema * (1 - k);
+        const x = (idx + 0.5) * (w / candles.length);
+        const y = yOf(ema);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Candlesticks
+      const step = w / candles.length;
+      const bodyW = Math.max(3, step * 0.52);
+      candles.forEach((c, idx) => {
+        const x = idx * step + step / 2;
+        const bull = c.close >= c.open;
+        ctx.strokeStyle = bull ? '#22c55e' : '#ef4444';
+        ctx.fillStyle = bull ? '#22c55e' : '#ef4444';
+
+        // Wick
+        ctx.beginPath();
+        ctx.moveTo(x, yOf(c.high));
+        ctx.lineTo(x, yOf(c.low));
+        ctx.stroke();
+
+        // Body
+        const top = yOf(Math.max(c.open, c.close));
+        const bot = yOf(Math.min(c.open, c.close));
+        ctx.fillRect(x - bodyW / 2, top, bodyW, Math.max(1.5, bot - top));
+      });
+    }
+
+    function tickMarket() {
+      const last = candles[candles.length - 1];
+      const move = (Math.random() - 0.49) * 0.95;
+      last.close += move;
+      last.high = Math.max(last.high, last.close);
+      last.low = Math.min(last.low, last.close);
+      currentPrice = last.close;
+
+      if (Math.random() > 0.82) {
+        candles.shift();
+        candles.push({
+          open: currentPrice,
+          high: currentPrice + 0.2,
+          low: currentPrice - 0.2,
+          close: currentPrice
+        });
+      }
+
+      const formatted = currentPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      const pct = (((currentPrice - basePrice) / basePrice) * 100).toFixed(2);
+      document.getElementById('chartPrice').textContent = formatted;
+      document.getElementById('topPrice').textContent = 'XAUUSD ' + formatted;
+      const deltaEl = document.getElementById('chartDelta');
+      deltaEl.textContent = (pct >= 0 ? '+' : '') + pct + '%';
+      deltaEl.style.color = pct >= 0 ? '#22c55e' : '#ef4444';
+      document.getElementById('spreadLabel').textContent = 'SPREAD: ' + (12 + Math.floor(Math.random() * 6)) + ' PTS';
+
+      drawChart();
+    }
+
+    initCandles();
+    drawChart();
+    setInterval(tickMarket, 1100);
+    window.addEventListener('resize', drawChart);
+
+    // 2. Interactive Workbench Scenarios & Voice Waveform
+    let waveTimer = null;
+    function setWave(active, label) {
+      const wf = document.getElementById('waveform');
+      const bars = wf.querySelectorAll('.wave-bar');
+      document.getElementById('voiceStatus').textContent = label;
+      clearInterval(waveTimer);
+      if (active) {
+        wf.classList.add('active');
+        waveTimer = setInterval(() => {
+          bars.forEach(b => {
+            b.style.height = (4 + Math.floor(Math.random() * 14)) + 'px';
+          });
+        }, 90);
+      } else {
+        wf.classList.remove('active');
+        bars.forEach(b => b.style.height = '4px');
+      }
+    }
+
+    const scenarios = {
+      vision: [
+        { tag: 'WAYLAND', cls: 'green', msg: 'Requested PipeWire frame via xdg-desktop-portal (1920x1080).' },
+        { tag: 'VISION', cls: '', msg: 'Detected active window: MetaTrader 5 [XAUUSD, M15] + VS Code.' },
+        { tag: 'VOICE', cls: 'gold', msg: 'Synthesizing: "Active chart shows liquidity sweep above session high."' }
+      ],
+      market: [
+        { tag: 'MT5', cls: 'gold', msg: 'Fetched 200 M1 ticks + EMA(9) slope from local MT5 socket.' },
+        { tag: 'RISK', cls: '', msg: 'Volatility check: ATR within normal London/NY overlap range.' },
+        { tag: 'VOICE', cls: 'gold', msg: 'Synthesizing: "Gold holding structure; spread stable at 14 points."' }
+      ],
+      memory: [
+        { tag: 'SQLITE', cls: 'green', msg: 'Executing FTS5 BM25 query: "XAUUSD exhibition risk rules".' },
+        { tag: 'MEMORY', cls: '', msg: '3 local notes retrieved in 1.3ms (0 network calls).' },
+        { tag: 'VOICE', cls: 'gold', msg: 'Synthesizing: "Loaded your saved session checklist from local memory."' }
+      ],
+      audit: [
+        { tag: 'SYS', cls: '', msg: 'CPU: Intel i5-8th Gen (11.8% load) | GPU: Intel UHD 620 (0% VRAM).' },
+        { tag: 'MEM', cls: 'green', msg: 'Process RSS: 148.4 MB | SQLite cache: 6.2 MB.' },
+        { tag: 'VOICE', cls: 'gold', msg: 'Synthesizing: "All local modules nominal. Ready for exhibition mode."' }
+      ]
+    };
+
+    function runScenario(key, btn) {
+      document.querySelectorAll('.trigger-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const logEl = document.getElementById('consoleLog');
+      const now = new Date();
+      const ts = now.toTimeString().slice(0, 8);
+      const steps = scenarios[key];
+
+      setWave(true, 'VOICE ENGINE: SYNTHESIZING RESPONSE...');
+      steps.forEach((step, idx) => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'log-line';
+          row.innerHTML = `<span class="log-time">[${ts}]</span><span class="log-tag ${step.cls}">${step.tag}</span>${step.msg}`;
+          logEl.appendChild(row);
+          logEl.scrollTop = logEl.scrollHeight;
+          if (idx === steps.length - 1) {
+            setTimeout(() => setWave(false, 'VOICE ENGINE: IDLE (EDGE-TTS / NEURAL)'), 1400);
+          }
+        }, idx * 420);
+      });
+    }
+
+    // 3. Architecture Inspector
+    const archData = [
+      {
+        title: 'Native Wayland Screen Capture & Context Compression',
+        desc: 'Unlike legacy X11 scrapers that break on modern Fedora GNOME sessions, SAN captures frames via PipeWire and xdg-desktop-portal, downsampling unchanged regions before sending compact visual deltas to vision models.',
+        proto: 'PipeWire / D-Bus', lat: '< 85 ms', mem: '28 MB', priv: 'On-Demand Frame'
+      },
+      {
+        title: 'Zero-Cloud Local Memory with SQLite FTS5',
+        desc: 'All conversation logs, trading notes, and workspace context are indexed locally using SQLite Full-Text Search (FTS5) with BM25 ranking—eliminating vector database RAM bloat and recurring cloud storage bills.',
+        proto: 'SQLite3 WAL Mode', lat: '1.4 ms', mem: '6 MB', priv: '100% On-Device'
+      },
+      {
+        title: 'Live MetaTrader 5 XAUUSD Telemetry Bridge',
+        desc: 'Streams live bid/ask ticks, spreads, and multi-timeframe candle structures directly from MetaTrader 5 so SAN can provide real-time voice-guided risk awareness during active trading sessions.',
+        proto: 'MT5 Python IPC', lat: '100 ms poll', mem: '14 MB', priv: 'Read-Only Feed'
+      },
+      {
+        title: 'Hybrid Inference Router (Local + Zero-Cost Cloud)',
+        desc: 'Routes lightweight classification and formatting to local Ollama models while escalating complex multimodal screen vision and reasoning to fast LPU/cloud APIs (Groq, Azure OpenAI) on demand.',
+        proto: 'Async HTTP / SSE', lat: '320 ms TTFT', mem: '18 MB', priv: 'Configurable Route'
+      },
+      {
+        title: 'Low-Latency Multilingual Voice Loop',
+        desc: 'Decoupled audio worker threads stream speech recognition and neural TTS (edge-tts / ElevenLabs / Deepgram) directly to PipeWire without blocking the PySide6 UI event loop.',
+        proto: 'Async Stream / PCM', lat: '< 400 ms', mem: '22 MB', priv: 'Push-to-Talk / VAD'
+      }
+    ];
+
+    function selectArch(index, el) {
+      document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      const d = archData[index];
+      document.getElementById('archTitle').textContent = d.title;
+      document.getElementById('archDesc').textContent = d.desc;
+      document.getElementById('archProto').textContent = d.proto;
+      document.getElementById('archLat').textContent = d.lat;
+      document.getElementById('archMem').textContent = d.mem;
+      document.getElementById('archPriv').textContent = d.priv;
+    }
+
+    // 4. Code Module Inspector
+    const codeSnippets = {
+      memory: `<span class="cm"># Local-first persistent recall using SQLite FTS5 + BM25 ranking</span>
+<span class="kw">import</span> sqlite3
+
+<span class="kw">class</span> <span class="fn">LocalMemoryStore</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db_path: str = <span class="str">"san_memory.db"</span>):
+        self.conn = sqlite3.connect(db_path, check_same_thread=<span class="kw">False</span>)
+        self.conn.execute(<span class="str">"PRAGMA journal_mode=WAL;"</span>)
+        self.conn.execute(<span class="str">"""
+            CREATE VIRTUAL TABLE IF NOT EXISTS memory_fts
+            USING fts5(topic, content, timestamp UNINDEXED);
+        """</span>)
+
+    <span class="kw">def</span> <span class="fn">recall</span>(self, query: str, limit: int = 4) -> list[tuple]:
+        sql = <span class="str">"""
+            SELECT topic, content, bm25(memory_fts) AS rank
+            FROM memory_fts WHERE memory_fts MATCH ?
+            ORDER BY rank LIMIT ?;
+        """</span>
+        <span class="kw">return</span> self.conn.execute(sql, (query, limit)).fetchall()`,
+
+      mt5: `<span class="cm"># Non-blocking MetaTrader 5 XAUUSD telemetry snapshot</span>
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+@dataclass(slots=<span class="kw">True</span>)
+<span class="kw">class</span> <span class="fn">MarketSnapshot</span>:
+    symbol: str
+    bid: float
+    ask: float
+    spread_pts: int
+
+<span class="kw">def</span> <span class="fn">read_gold_tick</span>(mt5_client) -> MarketSnapshot | <span class="kw">None</span>:
+    tick = mt5_client.symbol_info_tick(<span class="str">"XAUUSD"</span>)
+    <span class="kw">if not</span> tick:
+        <span class="kw">return None</span>
+    spread = int(round((tick.ask - tick.bid) * 100))
+    <span class="kw">return</span> MarketSnapshot(<span class="str">"XAUUSD"</span>, tick.bid, tick.ask, spread)`,
+
+      vision: `<span class="cm"># Wayland-native screenshot bridge using xdg-desktop-portal</span>
+<span class="kw">import</span> subprocess, pathlib
+
+<span class="kw">def</span> <span class="fn">capture_wayland_context</span>(out_path: str = <span class="str">"/tmp/san_ctx.png"</span>) -> pathlib.Path:
+    <span class="cm"># Captures active desktop frame without X11 dependencies</span>
+    subprocess.run(
+        [<span class="str">"grim"</span>, <span class="str">"-t"</span>, <span class="str">"png"</span>, <span class="str">"-l"</span>, <span class="str">"1"</span>, out_path],
+        check=<span class="kw">True</span>,
+        timeout=2.0
+    )
+    <span class="kw">return</span> pathlib.Path(out_path)`
+    };
+
+    let currentCodeKey = 'memory';
+    function switchCode(key, btn) {
+      currentCodeKey = key;
+      document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('codeDisplay').innerHTML = codeSnippets[key];
+    }
+    document.getElementById('codeDisplay').innerHTML = codeSnippets.memory;
+
+    function copyActiveCode(btn) {
+      const raw = document.getElementById('codeDisplay').innerText;
+      navigator.clipboard.writeText(raw);
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = 'Copy Snippet', 1500);
+    }
+
+    function copyEmail(btn) {
+      navigator.clipboard.writeText('pasamr.chess@gmail.com');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy Email', 1600);
+    }
+  </script>
+</body>
+</html>
